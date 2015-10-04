@@ -33,3 +33,11 @@ body,
 #menu {
   width: 150px;
 }
+
+.map-layer {
+  margin: 0.5em;
+}
+
+.map-layer:hover {
+  background-color: white;
+}

@@ -182,8 +182,7 @@ function initMap() {
 
 
 
-
-
+  // mapLoaded = true;
 }
 
 // var clicker = function(layer, infoWindow, marker) {
