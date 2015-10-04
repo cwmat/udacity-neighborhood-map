@@ -41,3 +41,11 @@ body,
 .map-layer:hover {
   background-color: white;
 }
+
+.map-search {
+  text-align: center;
+}
+
+.pure-form {
+  margin: 0 0.5em;
+}
