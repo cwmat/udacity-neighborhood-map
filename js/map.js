@@ -91,6 +91,8 @@ function initMap() {
       }
     });
 
+    layer.marker = marker;
+
     // var request = {
     //   placeId: results[0].place_id
     // };
@@ -106,6 +108,11 @@ function initMap() {
       infowindow.setContent(content);
       infowindow.open(map, marker);
     });
+
+    layer.infoWindow = infowindow;
+    layer.clicker = function() {
+      layer.infoWindow.open(map, layer.marker);
+    }
   }
 
   // Populate data
