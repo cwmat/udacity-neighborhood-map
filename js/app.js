@@ -1,14 +1,54 @@
 // Points of interest - map.js will populate this
-var initialPlaces = [{
+var initialPlaces = [
+  {
   name: "Sammy T's",
-  blurb: 'Good place to go and stuff',
-}, {
-  name: "J Brian's",
-  blurb: 'Favorite bar',
-}, {
-  name: "Paul's Bakery",
-  blurb: 'Good doughnuts!',
-}, ]
+  blurb: 'Vegetarian friendly.',
+  type: 'food',
+  },
+  {
+    name: "J Brian's",
+    blurb: 'My favorite bar in town!',
+    type: 'beer',
+  },
+  {
+    name: "Hyperion",
+    blurb: 'Trendy coffee spot.',
+    type: 'coffee',
+  },
+  {
+    name: "Eileens",
+    blurb: 'Quick, pre-made deli sandwiches.',
+    type: 'food',
+  },
+  {
+    name: "Capitol Ale House",
+    blurb: 'Near 100 different beers on tap.',
+    type: 'beer',
+  },
+  {
+    name: "Soup and Taco",
+    blurb: 'Try the black bean soup!!',
+    type: 'food',
+  },
+  {
+    name: "Spencer Devon",
+    blurb: 'New brewery.',
+    type: 'beer',
+  },
+  {
+    name: "Benny Vitali's",
+    blurb: 'Really, really big slices of pizza.',
+    type: 'food',
+  },
+  {
+    name: "Agora",
+    blurb: 'New coffee shop.',
+    type: 'coffee',
+  },
+]
+
+var map;
+// var globalMarkerList = [];
 
 // Map layer 'class'
 var Layer = function(data) {
@@ -22,6 +62,7 @@ var Layer = function(data) {
   this.placeID = ko.observable(data.placeID);
   this.marker = ko.observable(data.marker);
   this.popContent = ko.observable(data.popContent);
+  this.type = ko.observable(data.type);
 }
 
 // View Model 'class'
@@ -41,13 +82,67 @@ var ViewModel = function() {
     infoWindow.open(map, clickedLayer.marker());
   }
 
+  // Clear all markers
+  this.clearMarkers = function() {
+    for (var i = 0; i < self.layerList().length; i++) {
+      self.layerList()[i].marker().setMap(null);
+    }
+  }
+
+  // Click functions for filter buttons (breaking DRY here :[ was having trouble figureing out how to pass parameters to knockout click data-bind)
+  this.filterAll = function() {
+    // Turn all layers off
+    self.clearMarkers();
+
+    // Turn all layers on
+    for (var i = 0; i < self.layerList().length; i++) {
+      self.layerList()[i].marker().setMap(map)
+    }
+  }
+
+  this.filterFood = function() {
+    // Turn all layers off
+    self.clearMarkers();
+
+    // Turn all layers on
+    for (var i = 0; i < self.layerList().length; i++) {
+      if (self.layerList()[i].type() == 'food') {
+        self.layerList()[i].marker().setMap(map)
+      }
+    }
+  }
+
+  this.filterBeer = function() {
+    // Turn all layers off
+    self.clearMarkers();
+
+    // Turn all layers on
+    for (var i = 0; i < self.layerList().length; i++) {
+      if (self.layerList()[i].type() == 'beer') {
+        self.layerList()[i].marker().setMap(map)
+      }
+    }
+  }
+
+  this.filterCoffee = function() {
+    // Turn all layers off
+    self.clearMarkers();
+
+    // Turn all layers on
+    for (var i = 0; i < self.layerList().length; i++) {
+      if (self.layerList()[i].type() == 'coffee') {
+        self.layerList()[i].marker().setMap(map)
+      }
+    }
+  }
+
   // Create a map object and specify the DOM element for display.
-  var map = new google.maps.Map(document.getElementById('map'), {
+  map = new google.maps.Map(document.getElementById('map'), {
     center: {
       lat: 38.301995,
       lng: -77.458737
     },
-    zoom: 17,
+    zoom: 16,
   });
 
   // Used to request the place id based on common name of a place
@@ -84,10 +179,10 @@ var ViewModel = function() {
 
     // Make content string
     var content = "\
-    <p><strong>" + layer.properName + "</strong></p>\
-    <p>" + layer.address + "</p>\
-    <p>" + layer.blurb + '</p>\
-    <p><img src="' + layer.imgSrc + '" alt="Streetview" height="150px" width="350px"></p>';
+  <p><strong>" + layer.properName + "</strong></p>\
+  <p>" + layer.address + "</p>\
+  <p>" + layer.blurb + '</p>\
+  <p><img src="' + layer.imgSrc + '" alt="Streetview" height="150px" width="350px"></p>';
     // Add to initial places object
     layer.popContent = content;
 
@@ -98,16 +193,17 @@ var ViewModel = function() {
 
     layer.infoWindow = infowindow;
     layer.marker = marker;
+    console.log(marker);
     layer.clicker = function() {
       layer.infoWindow.open(map, layer.marker);
     }
+    // self.markerList().push(marker);
+    // globalMarkerList.push(marker);
   }
 
   // Populate data
   initialPlaces.forEach(function(place) {
     getPlaceID(place, place.name, function(info) {
-      // http://stackoverflow.com/questions/6847697/how-to-return-value-from-an-asynchronous-callback-function
-      // console.log(placeThing);
       place.properName = info.name;
       place.placeID = info.place_id;
       place.address = info.formatted_address;
@@ -118,7 +214,6 @@ var ViewModel = function() {
       self.layerList.push(new Layer(place));
     });
   });
-
 }
 
 // This gets called as a callback from google mpas api

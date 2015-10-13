@@ -48,17 +48,6 @@ Sources:
     <div id="menu">
       <div class="pure-menu">
         <span class="pure-menu-heading">Map Layers</span>
-
-        <!-- <ul class="pure-menu-list">
-          <li class="pure-menu-item"><a href="#" class="pure-menu-link">Home</a></li>
-          <li class="pure-menu-item"><a href="#" class="pure-menu-link">About</a></li>
-
-          <li class="pure-menu-item" class="menu-item-divided pure-menu-selected">
-            <a href="#" class="pure-menu-link">Services</a>
-          </li>
-
-          <li class="pure-menu-item"><a href="#" class="pure-menu-link">Contact</a></li>
-        </ul> -->
         <ul class="pure-menu-list" data-bind="foreach: layerList">
           <li class="pure-menu-item map-layer" data-bind="text: name, click: $parent.changeLayer"></li>
         </ul>
@@ -74,9 +63,10 @@ Sources:
       </div>
       <div class="pure-u-1 pure-u-md-1-2 map-search">
         <form id="form-container" class="form-container pure-form">
-            <label for="search">Search: </label><input type="text" id="search" value="">
-            <button id="submit-btn" class="pure-button">Submit</button>
-            <button id="reset-btn" class="pure-button">Reset</button>
+            <button id="all-button" class="pure-button" data-bind="click: filterAll">All</button>
+            <button id="food-button" class="pure-button" data-bind="click: filterFood">Food</button>
+            <button id="beer-button" class="pure-button" data-bind="click: filterBeer">Beer</button>
+            <button id="coffee-button" class="pure-button" data-bind="click: filterCoffee">Coffee</button>
         </form>
       </div>
     </div>
@@ -91,7 +81,7 @@ Sources:
   <!-- JS Imports -->
   <script src="js/vendor/knockout-3.2.0.js"></script>
   <script src="js/vendor/jquery-1.11.3.min.js"></script>
-  <script src="js/map.js"></script>
+  <!-- <script src="js/map.js"></script> -->
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtp3KZFkkTVnrx4IWUfY9gF0f8p8p_1LI&callback=initMap&libraries=places">
   </script>
