@@ -1,4 +1,4 @@
-// Points of interest - map.js will populate this
+// Points of interest
 var initialPlaces = [
   {
   name: "Sammy T's",
@@ -197,8 +197,6 @@ var ViewModel = function() {
     layer.clicker = function() {
       layer.infoWindow.open(map, layer.marker);
     }
-    // self.markerList().push(marker);
-    // globalMarkerList.push(marker);
   }
 
   // Populate data
@@ -209,7 +207,6 @@ var ViewModel = function() {
       place.address = info.formatted_address;
       place.imgSrc = "http://maps.googleapis.com/maps/api/streetview?size=600x400&location=" + place.address + '';
       place.location = info.geometry.location;
-      // console.log(place);
       makeLayer(place);
       self.layerList.push(new Layer(place));
     });
