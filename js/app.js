@@ -1,51 +1,41 @@
 // Points of interest
-var initialPlaces = [
-  {
+var initialPlaces = [{
   name: "Sammy T's",
   blurb: 'Vegetarian friendly.',
   type: 'food',
-  },
-  {
-    name: "J Brian's",
-    blurb: 'My favorite bar in town!',
-    type: 'beer',
-  },
-  {
-    name: "Hyperion",
-    blurb: 'Trendy coffee spot.',
-    type: 'coffee',
-  },
-  {
-    name: "Eileens",
-    blurb: 'Quick, pre-made deli sandwiches.',
-    type: 'food',
-  },
-  {
-    name: "Capitol Ale House",
-    blurb: 'Near 100 different beers on tap.',
-    type: 'beer',
-  },
-  {
-    name: "Soup and Taco",
-    blurb: 'Try the black bean soup!!',
-    type: 'food',
-  },
-  {
-    name: "Spencer Devon",
-    blurb: 'New brewery.',
-    type: 'beer',
-  },
-  {
-    name: "Benny Vitali's",
-    blurb: 'Really, really big slices of pizza.',
-    type: 'food',
-  },
-  {
-    name: "Agora",
-    blurb: 'New coffee shop.',
-    type: 'coffee',
-  },
-]
+}, {
+  name: "J Brian's",
+  blurb: 'My favorite bar in town!',
+  type: 'beer',
+}, {
+  name: "Hyperion",
+  blurb: 'Trendy coffee spot.',
+  type: 'coffee',
+}, {
+  name: "Eileens",
+  blurb: 'Quick, pre-made deli sandwiches.',
+  type: 'food',
+}, {
+  name: "Capitol Ale House",
+  blurb: 'Near 100 different beers on tap.',
+  type: 'beer',
+}, {
+  name: "Soup and Taco",
+  blurb: 'Try the black bean soup!!',
+  type: 'food',
+}, {
+  name: "Spencer Devon",
+  blurb: 'New brewery.',
+  type: 'beer',
+}, {
+  name: "Benny Vitali's",
+  blurb: 'Really, really big slices of pizza.',
+  type: 'food',
+}, {
+  name: "Agora",
+  blurb: 'New coffee shop.',
+  type: 'coffee',
+}, ]
 
 var map;
 // var globalMarkerList = [];
@@ -165,6 +155,15 @@ var ViewModel = function() {
     }
   }
 
+  // Marker animation
+  var toggleBounce = function() {
+    if (this.getAnimation() !== null) {
+      this.setAnimation(null);
+    } else {
+      this.setAnimation(google.maps.Animation.BOUNCE);
+    }
+  }
+
   // Produces markers and infowindows
   var makeLayer = function(layer) {
     var marker = new google.maps.Marker({
@@ -174,6 +173,8 @@ var ViewModel = function() {
         location: layer.location,
       }
     });
+
+    marker.addListener('click', toggleBounce);
 
     var infowindow = new google.maps.InfoWindow();
 
@@ -193,7 +194,6 @@ var ViewModel = function() {
 
     layer.infoWindow = infowindow;
     layer.marker = marker;
-    console.log(marker);
     layer.clicker = function() {
       layer.infoWindow.open(map, layer.marker);
     }
@@ -210,6 +210,67 @@ var ViewModel = function() {
       makeLayer(place);
       self.layerList.push(new Layer(place));
     });
+  });
+
+  // Call autocomplete
+  initAutocomplete();
+}
+
+// Search Bar function
+function initAutocomplete() {
+  // Create the search box and link it to the UI element.
+  var input = document.getElementById('pac-input');
+  var searchBox = new google.maps.places.SearchBox(input);
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  // Bias the SearchBox results towards current map's viewport.
+  map.addListener('bounds_changed', function() {
+    searchBox.setBounds(map.getBounds());
+  });
+
+  var searchMarkers = [];
+  // Listen for the event fired when the user selects a prediction and retrieve
+  // more details for that place.
+  searchBox.addListener('places_changed', function() {
+    var places = searchBox.getPlaces();
+
+    if (places.length == 0) {
+      return;
+    }
+
+    // Clear out the old searchMarkers.
+    searchMarkers.forEach(function(marker) {
+      marker.setMap(null);
+    });
+    searchMarkers = [];
+
+    // For each place, get the icon, name and location.
+    var bounds = new google.maps.LatLngBounds();
+    places.forEach(function(place) {
+      var icon = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+
+      // Create a marker for each place.
+      searchMarkers.push(new google.maps.Marker({
+        map: map,
+        icon: icon,
+        title: place.name,
+        position: place.geometry.location
+      }));
+
+      if (place.geometry.viewport) {
+        // Only geocodes have viewport.
+        bounds.union(place.geometry.viewport);
+      } else {
+        bounds.extend(place.geometry.location);
+      }
+    });
+    map.fitBounds(bounds);
   });
 }
 
