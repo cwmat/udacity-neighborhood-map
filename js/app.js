@@ -53,6 +53,7 @@ var Layer = function(data) {
   this.marker = ko.observable(data.marker);
   this.popContent = ko.observable(data.popContent);
   this.type = ko.observable(data.type);
+  this.url = ko.observable(data.url);
 }
 
 // View Model 'class'
@@ -183,7 +184,8 @@ var ViewModel = function() {
   <p><strong>" + layer.properName + "</strong></p>\
   <p>" + layer.address + "</p>\
   <p>" + layer.blurb + '</p>\
-  <p><img src="' + layer.imgSrc + '" alt="Streetview" height="150px" width="350px"></p>';
+  <p><img src="' + layer.imgSrc + '" alt="Streetview" height="150px" width="350px"></p>\
+  <p><a href="' + layer.url + '">' + layer.url + '</a></p>';
     // Add to initial places object
     layer.popContent = content;
 
@@ -199,6 +201,48 @@ var ViewModel = function() {
     }
   }
 
+  var getURL = function(callback, place, info) {
+    // Create URL for foursquare API using food, bar, and coffee categories
+    fourSquareQuery = "https://api.foursquare.com/v2/venues/search" +
+      "?client_id=JCP1A22LFDAQ4KWQI2ZGLOPAV2GW2ZQWB03ES0G20L0FTLYS" +
+      "&client_secret=HYDXYR3TRLPTCZQDA0OQUWZ5PNXMGCSFDAM2ZPQYXHOC1JSA" +
+      "&v=20130815&ll=" + info.geometry.location.lat() + "," + info.geometry.location.lng() + "&intent=checkin&radius=500" +
+      "&limit=1&categoryId=4d4b7105d754a06374d81259,4bf58dd8d48988d116941735,4bf58dd8d48988d1e0931735" +
+      "&query=" + encodeURIComponent(info.name);
+
+    $.ajax({
+      dataType: "json",
+      url: fourSquareQuery,
+      success: function(data) {
+        var venue, venueURL;
+        venue = data.response.venues[0];
+        urlCallback(venue, place);
+        // console.log(venue);
+        //   if (typeof venue != "undefined") {
+        //     venueURL = venue.url;
+        //     place.url = venueURL;
+        //     console.log(venueURL);
+        //   } else {
+        //     place.url = "Cannot find URL";
+        //   }
+      },
+      error: function() {
+        place.url = "URL Request failed";
+      }
+    });
+  }
+
+  var urlCallback = function(venue, place) {
+    if (typeof venue != "undefined") {
+      venueURL = venue.url;
+      place.url = venueURL;
+      console.log(venueURL);
+    } else {
+      place.url = "Cannot find URL";
+    }
+  }
+
+
   // Populate data
   initialPlaces.forEach(function(place) {
     getPlaceID(place, place.name, function(info) {
@@ -207,11 +251,77 @@ var ViewModel = function() {
       place.address = info.formatted_address;
       place.imgSrc = "http://maps.googleapis.com/maps/api/streetview?size=600x400&location=" + place.address + '';
       place.location = info.geometry.location;
+      getURL(urlCallback, place, info);
+
+
+
+
+
+
+
       makeLayer(place);
-      self.layerList.push(new Layer(place));
+      setTimeout(function(){ self.layerList.push(new Layer(place)); }, 1000);
+      // self.layerList.push(new Layer(place));
+
+      // Wikipedia call
+      // Set timeout in case request does not work
+      // var wikiRequestTimeout = setTimeout(function() {
+      //   place.wiki("failed to get wikipedia resources");
+      // }, 8000);
+      //
+      // var wikiURL = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + info.name + "&format=json&callback=wikiCallback"
+      // $.ajax({
+      //   url: wikiURL,
+      //   dataType: 'jsonp',
+      //   success: function(data) {
+      //     var articleList = data[1];
+      //     console.log(articleList);
+      //
+      //     for (var i = 0; i < articleList.length; i++) {
+      //       articleStr = articleList[i];
+      //       var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+      //       place.wiki = url;
+      //     };
+      //
+      //     clearTimeout(wikiRequestTimeout);
+      //   }
+      // });
+
+      // var yelpRequestTimeout = setTimeout(function() {
+      //   place.yelp = "failed to get wikipedia resources";
+      // }, 8000);
+      //
+      // var yelpURL = "https://api.yelp.com/v2/search?term=cream+puffs&location=Fredericksburg+VA"
+      // $.ajax({
+      //   url: yelpURL,
+      //   dataType: 'jsonp',
+      //   oauth_consumer_key: 'hEJoUCQrC0z_F5BG-plXYQ',
+      //   oauth_token: 'eej8ZsUdotX8e01mKI4P63Wp-95wdexQ',
+      //   oauth_signature_method: 'hmac-sha1',
+      //   success: function(data) {
+      //     // var articleList = data[1];
+      //     console.log(data);
+      //
+      //     // for (var i = 0; i < articleList.length; i++) {
+      //     //   articleStr = articleList[i];
+      //     //   var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+      //     //   place.wiki = url;
+      //     // };
+      //
+      //     clearTimeout(yelpRequestTimeout);
+      //   }
+      // });
+
+
+
+
+
+
+
+
+
     });
   });
-
   // Call autocomplete
   initAutocomplete();
 }
