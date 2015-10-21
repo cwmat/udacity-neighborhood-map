@@ -158,10 +158,13 @@ var ViewModel = function() {
 
   // Marker animation
   var toggleBounce = function() {
+    var self = this;
     if (this.getAnimation() !== null) {
       this.setAnimation(null);
-    } else {
-      this.setAnimation(google.maps.Animation.BOUNCE);
+    } else { // timeout isnt working
+      setTimeout(function() {
+        self.setAnimation(google.maps.Animation.BOUNCE);
+      }, 10);
     }
   }
 
@@ -259,7 +262,7 @@ var ViewModel = function() {
 
 
 
-      makeLayer(place);
+      setTimeout(function(){ makeLayer(place); }, 1000);
       setTimeout(function(){ self.layerList.push(new Layer(place)); }, 1000);
       // self.layerList.push(new Layer(place));
 
