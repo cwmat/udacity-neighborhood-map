@@ -150,12 +150,15 @@ var populateInitialData = function() {
     // console.log(place.name);
     makeGoogleRequest(place, getGoogleData);
 
-    $(document).ajaxStop(function() {
-      console.log(place.url);
-      // place.marker.setMap(map);
-      // TODO do stuff
-
-
-    });
+    // $(document).ajaxStop(function() {
+    //   console.log(place.url);
+    //   // place.marker.setMap(map);
+    //   // TODO do stuff
+    //
+    //
+    // });
+  });
+  $(document).ajaxStop(function() {
+    ko.applyBindings(new ViewModel());
   });
 }
