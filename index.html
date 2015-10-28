@@ -64,16 +64,16 @@ Sources:
       <div class="pure-u-1 pure-u-md-1-2 map-search">
         <form id="form-container" class="form-container pure-form">
             <label>Filter Options</label>
-            <button id="all-button" class="pure-button" data-bind="click: filterAll">All</button>
-            <button id="food-button" class="pure-button" data-bind="click: filterFood">Food</button>
-            <button id="beer-button" class="pure-button" data-bind="click: filterBeer">Beer</button>
-            <button id="coffee-button" class="pure-button" data-bind="click: filterCoffee">Coffee</button>
+            <button id="all-button" class="pure-button" data-bind="click: function () { filter('all') }">All</button>
+            <button id="food-button" class="pure-button" data-bind="click: function () { filter('food') }">Food</button>
+            <button id="beer-button" class="pure-button" data-bind="click: function () { filter('beer') }">Beer</button>
+            <button id="coffee-button" class="pure-button" data-bind="click: function () { filter('coffee') }">Coffee</button>
         </form>
       </div>
     </div>
       <!-- Map -->
       <div class="content">
-        <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Box"> -->
+        <input id="pac-input" class="controls" type="text" placeholder="Search Box" data-bind="textInput: userInput, event: {keyup: filterMarkers}">
         <div id="map"></div>
       </div>
     </div>

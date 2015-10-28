@@ -1,3 +1,5 @@
+'use strict';
+
 // Points of interest
 // Example of final place object literal:
 // {

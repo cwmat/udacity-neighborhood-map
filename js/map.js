@@ -1,3 +1,5 @@
+'use strict';
+
 // Make map global
 var map;
 
@@ -17,7 +19,7 @@ var initMap = function() {
     // console.log('farts');
     // console.log(initialPlaces[0].properName);
   // }, 3000);
-}
+};
 
 // Populate a place object literal with data from google based on a common name
 var makeGoogleRequest = function(place, fn) {
@@ -41,8 +43,8 @@ var makeGoogleRequest = function(place, fn) {
   function callback(results, status) {
     fn(place, results[0]);
     // console.log(results[0]);
-  }
-}
+  };
+};
 
 // Get google data
 var getGoogleData = function(place, info) {
@@ -62,7 +64,7 @@ var getGoogleData = function(place, info) {
 // Populate a place object literal with data from four square based on a proper name.  Get the proper name from getGoogleData (Google's search seems to be smarter and can handle a 'fuzzy' name)
 var getFourSquareData = function(callback, place, info) {
   // Create URL for foursquare API using food, bar, and coffee categories
-  fourSquareQuery = "https://api.foursquare.com/v2/venues/search" +
+  var fourSquareQuery = "https://api.foursquare.com/v2/venues/search" +
     "?client_id=JCP1A22LFDAQ4KWQI2ZGLOPAV2GW2ZQWB03ES0G20L0FTLYS" +
     "&client_secret=HYDXYR3TRLPTCZQDA0OQUWZ5PNXMGCSFDAM2ZPQYXHOC1JSA" +
     "&v=20130815&ll=" + info.geometry.location.lat() + "," + info.geometry.location.lng() + "&intent=checkin&radius=500" +
@@ -81,17 +83,17 @@ var getFourSquareData = function(callback, place, info) {
       place.url = "URL Request failed";
     }
   });
-}
+};
 
 var urlCallback = function(venue, place) {
   if (typeof venue != "undefined") {
-    venueURL = venue.url;
+    var venueURL = venue.url;
     place.url = venueURL;
     // console.log(venueURL);
   } else {
     place.url = "Cannot find URL";
-  }
-}
+  };
+};
 
 // Create and add a marker to a place object literal
 var createMarker = function(place) {
@@ -111,11 +113,11 @@ var createMarker = function(place) {
 
   // Make content string
   var content = "\
-<p><strong>" + place.properName + "</strong></p>\
-<p>" + place.address + "</p>\
-<p>" + place.blurb + '</p>\
-<p><img src="' + place.imgSrc + '" alt="Streetview" height="150px" width="350px"></p>\
-<p><a href="' + place.url + '">' + place.url + '</a></p>';
+  <p><strong>" + place.properName + "</strong></p>\
+  <p>" + place.address + "</p>\
+  <p>" + place.blurb + '</p>\
+  <p><img src="' + place.imgSrc + '" alt="Streetview" height="150px" width="350px"></p>\
+  <p><a href="' + place.url + '">' + place.url + '</a></p>';
   // Add to initial places object
   place.popContent = content;
 
@@ -128,21 +130,21 @@ var createMarker = function(place) {
   place.marker = marker;
   place.clicker = function() {
     place.infoWindow.open(map, place.marker);
-  }
-}
+  };
+};
 
 // Marker animation
 var toggleBounce = function() {
   var self = this;
-  if (this.getAnimation() !== null) {
-    this.setAnimation(null);
+  if (self.getAnimation() !== null) {
+    self.setAnimation(null);
   } else { // timeout isnt working
     self.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function() {
       self.setAnimation(null);
     }, 3000);
-  }
-}
+  };
+};
 
 var populateInitialData = function() {
   // Test
@@ -161,4 +163,4 @@ var populateInitialData = function() {
   $(document).ajaxStop(function() {
     ko.applyBindings(new ViewModel());
   });
-}
+};
