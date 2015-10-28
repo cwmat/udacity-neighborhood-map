@@ -37,7 +37,7 @@ var ViewModel = function() {
       // If filter option is all add all layers to the sidebar
       if (self.filterOption() == "all") {
         self.tempList.push(self.layerList()[i])
-          // Else add only the ones that match the current filterOption
+      // Else add only the ones that match the current filterOption
       } else if (self.layerList()[i].type() == self.filterOption()) {
         self.tempList.push(self.layerList()[i])
       }
@@ -84,7 +84,6 @@ var ViewModel = function() {
       if (self.filterOption() == 'all') {
         self.addAllMarkers();
         break;
-        // self.addMarker(self.layerList()[i].marker());
       } else if (self.layerList()[i].type() == self.filterOption()) {
         self.addMarker(self.layerList()[i].marker());
       }
