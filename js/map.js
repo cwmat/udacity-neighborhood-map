@@ -81,17 +81,23 @@ var getFourSquareData = function(callback, place, info) {
     },
     error: function() {
       place.url = "URL Request failed";
+      place.category = "URL Request failed";
+      place.phone = "URL Request failed";
     }
   });
 };
 
 var urlCallback = function(venue, place) {
   if (typeof venue != "undefined") {
-    var venueURL = venue.url;
-    place.url = venueURL;
-    // console.log(venueURL);
+    // var venueURL = venue.url;
+    console.log(venue);
+    place.url = venue.url;
+    place.category = venue.categories[0].name;
+    place.phone = venue.contact.formattedPhone;
   } else {
     place.url = "Cannot find URL";
+    place.category = "Cannot find URL";
+    place.phone = "Cannot find URL";
   };
 };
 
@@ -106,60 +112,57 @@ var createMarker = function(place) {
     }
   });
 
-  // animation and info window
-  marker.addListener('click', toggleBounce);
+  // // animation and info window
+  // marker.addListener('click', toggleBounce);
 
   var infowindow = new google.maps.InfoWindow();
 
   // Make content string
-  var content = "\
-  <p><strong>" + place.properName + "</strong></p>\
-  <p>" + place.address + "</p>\
-  <p>" + place.blurb + '</p>\
+  var content = '\
+  <p><strong>' + place.properName + '</strong></p>\
+  <p>' + place.category + '</p>\
+  <p>' + place.phone + '</p>\
+  <p>' + place.address + '</p>\
+  <p>' + place.blurb + '</p>\
   <p><img src="' + place.imgSrc + '" alt="Streetview" height="150px" width="350px"></p>\
   <p><a href="' + place.url + '">' + place.url + '</a></p>';
   // Add to initial places object
   place.popContent = content;
 
   marker.addListener('click', function() {
+    // Marker animation
+    var self = this;
+    if (self.getAnimation() !== null) {
+      self.setAnimation(null);
+    } else {
+      self.setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(function() {
+        self.setAnimation(null);
+      }, 3000);
+    };
+
+    // Open info window
+    infowindow.close();
     infowindow.setContent(content);
     infowindow.open(map, marker);
   });
 
+  // Close infowindow when you click outside of it
+  map.addListener('click', function() {
+    infowindow.close();
+  });
+
   place.infoWindow = infowindow;
   place.marker = marker;
-  place.clicker = function() {
-    place.infoWindow.open(map, place.marker);
-  };
 };
 
-// Marker animation
-var toggleBounce = function() {
-  var self = this;
-  if (self.getAnimation() !== null) {
-    self.setAnimation(null);
-  } else { // timeout isnt working
-    self.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(function() {
-      self.setAnimation(null);
-    }, 3000);
-  };
-};
-
+// Make requests to google and foursquare to populate the initialplaces object with more data
 var populateInitialData = function() {
-  // Test
   initialPlaces.forEach(function(place) {
-    // console.log(place.name);
     makeGoogleRequest(place, getGoogleData);
-
-    // $(document).ajaxStop(function() {
-    //   console.log(place.url);
-    //   // place.marker.setMap(map);
-    //   // TODO do stuff
-    //
-    //
-    // });
   });
+
+  // Wait until ajax requests are done, then start knockout by instantiating a ViewModel object
   $(document).ajaxStop(function() {
     ko.applyBindings(new ViewModel());
   });

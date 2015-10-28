@@ -8,12 +8,13 @@ var Layer = function(data) {
   this.address = ko.observable(data.address);
   this.imgSrc = ko.observable(data.imgSrc);
   this.infoWindow = ko.observable(data.infoWindow);
-  this.clicker = ko.observable(data.clicker);
   this.placeID = ko.observable(data.placeID);
   this.marker = ko.observable(data.marker);
   this.popContent = ko.observable(data.popContent);
   this.type = ko.observable(data.type);
   this.url = ko.observable(data.url);
+  this.category = ko.observable(data.category);
+  this.phone = ko.observable(data.phone);
 };
 
 // View Model 'class'
@@ -21,8 +22,8 @@ var ViewModel = function() {
   var self = this;
 
   // This, along with the data-bind on the <input> element, lets KO keep
-   // constant awareness of what the user has entered. It stores the user's
-   // input at all times.
+  // constant awareness of what the user has entered. It stores the user's
+  // input at all times.
   this.userInput = ko.observable('');
   this.filterOption = ko.observable("all");
   this.layerList = ko.observableArray([]);
@@ -70,6 +71,7 @@ var ViewModel = function() {
     }
   };
 
+  // Button filter based on place type
   this.filter = function(newFilterOption) {
     console.log(newFilterOption);
 
@@ -91,10 +93,8 @@ var ViewModel = function() {
     }
   };
 
-  // The filter will look at the names of the places the Markers are standing
-  // for, and look at the user input in the search box. If the user input string
-  // can be found in the place name, then the place is allowed to remain
-  // visible. All other markers are removed.
+  // Filter markers based on typed input from user
+  // Big help from http://codepen.io/prather-mcs/pen/KpjbNN?editors=001
   self.filterMarkers = function() {
     var searchInput = self.userInput().toLowerCase();
 
@@ -102,55 +102,16 @@ var ViewModel = function() {
     self.tempList.removeAll();
     self.clearAllMarkers();
 
-    // This looks at the name of each places and then determines if the user
-    // input can be found within the place name.
-
-
-    // self.layerList().forEach(function(layer) {
+    // Check if any layer's names match the user input
     for (var i = 0; i < self.layerList().length; i++) {
       var layer = self.layerList()[i];
 
-      // layer.marker.setVisible(false);
-
       if (layer.name().toLowerCase().indexOf(searchInput) !== -1) {
-        // self.visiblePlaces.push(layer);
         self.addMarker(layer.marker());
         self.tempList.push(layer);
       }
     }
-  // });
-
-
-    // self.visiblePlaces().forEach(function(layer) {
-    //   layer.marker.setVisible(true);
-    // });
   };
-
-  // Filter Options
-
-  // Create observable arrays of layers
-
-  // Create
-
-
-  // Cycle through initialLayers data and create Layer objects
-
-
-
-  // // Test
-  // initialPlaces.forEach(function(place) {
-  //   console.log(place.name);
-  //   makeGoogleRequest(place, getGoogleData);
-  // });
-
-  // Test BS function
-  // var bsFunction = function() {
-  //   console.log('farts');
-  // }
-
-  // $(document).ajaxComplete(function() {
-  //   console.log(initialPlaces[0].properName);
-  // });
 
   // Start the program
   this.init();
