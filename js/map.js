@@ -1,7 +1,8 @@
 'use strict';
 
-// Make map global
+// Make map and bounds global
 var map;
+var bounds;
 
 var initMap = function() {
   // Create a map object and link it to #map in the DOM.
@@ -13,12 +14,10 @@ var initMap = function() {
     },
     zoom: 16,
   });
-  // ko.applyBindings(new ViewModel());
+
+  // Set initial bounds
+  bounds = new google.maps.LatLngBounds()
   populateInitialData();
-  // setTimeout(function() {
-    // console.log('farts');
-    // console.log(initialPlaces[0].properName);
-  // }, 3000);
 };
 
 // Populate a place object literal with data from google based on a common name
@@ -34,15 +33,12 @@ var makeGoogleRequest = function(place, fn) {
   };
 
   // Create a service and pass the search request
-  // $(document).ajaxStop(function() { // Make sure google maps api is loaded
   var service = new google.maps.places.PlacesService(map);
   service.textSearch(request, callback);
-  // });
 
   // Passes the results from the google search request
   function callback(results, status) {
     fn(place, results[0]);
-    // console.log(results[0]);
   };
 };
 
@@ -57,8 +53,9 @@ var getGoogleData = function(place, info) {
 
   $(document).ajaxComplete(function() {
     createMarker(place);
+    // Center map on markers
+    map.fitBounds(bounds);
   });
-  // console.log(place.properName);
 }
 
 // Populate a place object literal with data from four square based on a proper name.  Get the proper name from getGoogleData (Google's search seems to be smarter and can handle a 'fuzzy' name)
@@ -87,10 +84,9 @@ var getFourSquareData = function(callback, place, info) {
   });
 };
 
+// Callback for foursquare ajax call
 var urlCallback = function(venue, place) {
   if (typeof venue != "undefined") {
-    // var venueURL = venue.url;
-    console.log(venue);
     place.url = venue.url;
     place.category = venue.categories[0].name;
     place.phone = venue.contact.formattedPhone;
@@ -112,9 +108,11 @@ var createMarker = function(place) {
     }
   });
 
-  // // animation and info window
-  // marker.addListener('click', toggleBounce);
+  // Extend bounds
+  var latLng = new google.maps.LatLng(place.location.lat(), place.location.lng());
+  bounds.extend(latLng);
 
+  // Create infowindow
   var infowindow = new google.maps.InfoWindow();
 
   // Make content string
@@ -129,6 +127,7 @@ var createMarker = function(place) {
   // Add to initial places object
   place.popContent = content;
 
+  // Add click event to open popup and make marker bounce
   marker.addListener('click', function() {
     // Marker animation
     var self = this;
@@ -161,6 +160,11 @@ var populateInitialData = function() {
   initialPlaces.forEach(function(place) {
     makeGoogleRequest(place, getGoogleData);
   });
+
+// On resize, fit to markers
+window.onresize = function() {
+  map.fitBounds(bounds);
+}
 
   // Wait until ajax requests are done, then start knockout by instantiating a ViewModel object
   $(document).ajaxStop(function() {

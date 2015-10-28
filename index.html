@@ -57,11 +57,14 @@ Sources:
     <div id="main">
       <!-- Header -->
       <div class="pure-g">
-      <div class="header pure-u-1 pure-u-md-1-2">
+      <div class="header pure-u-1 is-center">
         <h1>Neighborhood Map App</h1>
         <h2>Downtown Fredericksburg, VA</h2>
       </div>
-      <div class="pure-u-1 pure-u-md-1-2 map-search">
+      <div class="pure-u-1 is-center" id="search-box">
+        <input id="pac-input" class="controls" type="text" placeholder="Search Box" data-bind="textInput: userInput, event: {keyup: filterMarkers}">
+      </div>
+      <div class="pure-u-1 is-center" id="filters">
         <form id="form-container" class="form-container pure-form">
             <label>Filter Options</label>
             <button id="all-button" class="pure-button" data-bind="click: function () { filter('all') }">All</button>
@@ -73,7 +76,7 @@ Sources:
     </div>
       <!-- Map -->
       <div class="content">
-        <input id="pac-input" class="controls" type="text" placeholder="Search Box" data-bind="textInput: userInput, event: {keyup: filterMarkers}">
+        <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Box" data-bind="textInput: userInput, event: {keyup: filterMarkers}"> -->
         <div id="map"></div>
       </div>
     </div>

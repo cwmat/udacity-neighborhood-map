@@ -113,6 +113,18 @@ var ViewModel = function() {
     }
   };
 
+  // This gets called when an li is clicked in the map's side panel
+  this.changeLayer = function(clickedLayer) {
+    // Setting to current is not necessary but I may implement some functionality for this later
+    var infoWindow = new google.maps.InfoWindow();
+    infoWindow.setContent(clickedLayer.popContent());
+    infoWindow.open(map, clickedLayer.marker());
+    // Close infowindow when you click outside of it
+    map.addListener('click', function() {
+      infoWindow.close();
+    });
+  }
+
   // Start the program
   this.init();
 
