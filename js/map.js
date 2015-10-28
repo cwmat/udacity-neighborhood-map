@@ -161,10 +161,10 @@ var populateInitialData = function() {
     makeGoogleRequest(place, getGoogleData);
   });
 
-// On resize, fit to markers
-window.onresize = function() {
-  map.fitBounds(bounds);
-}
+  // On resize, fit to markers
+  window.onresize = function() {
+    map.fitBounds(bounds);
+  }
 
   // Wait until ajax requests are done, then start knockout by instantiating a ViewModel object
   $(document).ajaxStop(function() {
