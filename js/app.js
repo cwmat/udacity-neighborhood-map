@@ -36,15 +36,16 @@ var ViewModel = function() {
     for (var i = 0; i < self.layerList().length; i++) {
       // If filter option is all add all layers to the sidebar
       if (self.filterOption() == "all") {
-        self.tempList.push(self.layerList()[i])
-      // Else add only the ones that match the current filterOption
+        self.tempList.push(self.layerList()[i]);
+        // Else add only the ones that match the current filterOption
       } else if (self.layerList()[i].type() == self.filterOption()) {
-        self.tempList.push(self.layerList()[i])
+        self.tempList.push(self.layerList()[i]);
       }
     }
   }, this);
 
   this.init = function() {
+    // initialPlaces is a global found in places.js
     initialPlaces.forEach(function(place) {
       self.layerList.push(new Layer(place));
     });
@@ -113,14 +114,9 @@ var ViewModel = function() {
   // This gets called when an li is clicked in the map's side panel
   this.changeLayer = function(clickedLayer) {
     // Setting to current is not necessary but I may implement some functionality for this later
-    var infoWindow = new google.maps.InfoWindow();
-    infoWindow.setContent(clickedLayer.popContent());
-    infoWindow.open(map, clickedLayer.marker());
-    // Close infowindow when you click outside of it
-    map.addListener('click', function() {
-      infoWindow.close();
-    });
-  }
+    infowindow.setContent(clickedLayer.popContent());
+    infowindow.open(map, clickedLayer.marker());
+  };
 
   // Start the program
   this.init();

@@ -3,6 +3,7 @@
 // Make map and bounds global
 var map;
 var bounds;
+var infowindow;
 
 var initMap = function() {
   // Create a map object and link it to #map in the DOM.
@@ -16,7 +17,7 @@ var initMap = function() {
   });
 
   // Set initial bounds
-  bounds = new google.maps.LatLngBounds()
+  bounds = new google.maps.LatLngBounds();
   populateInitialData();
 };
 
@@ -39,7 +40,7 @@ var makeGoogleRequest = function(place, fn) {
   // Passes the results from the google search request
   function callback(results, status) {
     fn(place, results[0]);
-  };
+  }
 };
 
 // Get google data
@@ -56,11 +57,12 @@ var getGoogleData = function(place, info) {
     // Center map on markers
     map.fitBounds(bounds);
   });
-}
+};
 
 // Populate a place object literal with data from four square based on a proper name.  Get the proper name from getGoogleData (Google's search seems to be smarter and can handle a 'fuzzy' name)
 var getFourSquareData = function(callback, place, info) {
   // Create URL for foursquare API using food, bar, and coffee categories
+  /*jshint multistr: true */
   var fourSquareQuery = "https://api.foursquare.com/v2/venues/search" +
     "?client_id=JCP1A22LFDAQ4KWQI2ZGLOPAV2GW2ZQWB03ES0G20L0FTLYS" +
     "&client_secret=HYDXYR3TRLPTCZQDA0OQUWZ5PNXMGCSFDAM2ZPQYXHOC1JSA" +
@@ -94,7 +96,7 @@ var urlCallback = function(venue, place) {
     place.url = "Cannot find URL";
     place.category = "Cannot find URL";
     place.phone = "Cannot find URL";
-  };
+  }
 };
 
 // Create and add a marker to a place object literal
@@ -113,9 +115,10 @@ var createMarker = function(place) {
   bounds.extend(latLng);
 
   // Create infowindow
-  var infowindow = new google.maps.InfoWindow();
+  infowindow = new google.maps.InfoWindow();
 
   // Make content string
+  /*jshint multistr: true */
   var content = '\
   <p><strong>' + place.properName + '</strong></p>\
   <p>' + place.category + '</p>\
@@ -131,16 +134,14 @@ var createMarker = function(place) {
   marker.addListener('click', function() {
     // Marker animation
     var self = this;
-    if (self.getAnimation() !== null) {
-      self.setAnimation(null);
-    } else {
-      self.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function() {
-        self.setAnimation(null);
-      }, 3000);
-    };
 
-    // Open info window
+    // Bounce animation
+    self.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {
+      self.setAnimation(undefined);
+    }, 1500);
+
+    // Open info window (close old one first)
     infowindow.close();
     infowindow.setContent(content);
     infowindow.open(map, marker);
@@ -164,7 +165,7 @@ var populateInitialData = function() {
   // On resize, fit to markers
   window.onresize = function() {
     map.fitBounds(bounds);
-  }
+  };
 
   // Wait until ajax requests are done, then start knockout by instantiating a ViewModel object
   $(document).ajaxStop(function() {

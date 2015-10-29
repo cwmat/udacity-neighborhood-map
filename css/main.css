@@ -61,7 +61,7 @@ body,
 
 #pac-input {
   background-color: #fff;
-  font-family: 15px 300 Roboto, arial, helvetica, verdana, sans-serif;
+  font: 15px 300 Roboto, arial, helvetica, verdana, sans-serif;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
   width: 300px;

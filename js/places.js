@@ -17,9 +17,7 @@
 //   url: 'url/from/foursquare',
 // }
 
-var initialPlaces =
-[
-  {
+var initialPlaces = [{
   name: "Sammy T's",
   blurb: 'Vegetarian friendly.',
   type: 'food',
@@ -51,5 +49,4 @@ var initialPlaces =
   name: "Benny Vitali's",
   blurb: 'Really, really big slices of pizza.',
   type: 'food',
-},
-];
+}, ];
